@@ -232,7 +232,8 @@ namespace GadgetStore.Controllers
         {
             // Fetch the order by ID
             var order = _context.Orders
-                .Include(o => o.OrderItems) 
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
                 .FirstOrDefault(o => o.Id == id);
 
             if (order == null)

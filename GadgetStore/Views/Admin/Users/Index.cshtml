@@ -2,49 +2,175 @@
 
 @{
     ViewData["Title"] = "Manage Users";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
-    <h1 class="display-4 text-primary">Manage Users</h1>
+<div class="min-vh-100 bg-gray-50">
+    <div class="container py-5" style="max-width: 1400px;">
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <!-- Header -->
+        <div class="d-flex align-items-center justify-content-between mb-5">
+            <div>
+                <h1 class="h3 fw-bold text-dark mb-1">Manage Users</h1>
+                <p class="text-muted mb-0">View and manage all registered users</p>
+            </div>
+            <div class="text-end">
+                <span class="fs-4 fw-bold text-primary">@Model.Count()</span>
+                <small class="text-muted d-block">total users</small>
+            </div>
         </div>
-    }
 
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            @TempData["ErrorMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <!-- Messages -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success rounded-3 shadow-sm d-flex align-items-center gap-3 mb-4">
+                <span class="material-icons text-success">check_circle</span>
+                @TempData["SuccessMessage"]
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger rounded-3 shadow-sm d-flex align-items-center gap-3 mb-4">
+                <span class="material-icons text-danger">error</span>
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <!-- Search Bar -->
+        <div class="bg-white rounded-3 shadow-sm p-4 mb-4">
+            <div class="position-relative">
+                <span class="material-icons position-absolute top-50 start-4 translate-middle-y text-muted">search</span>
+                <input type="text" id="searchInput" class="form-control form-control-lg rounded-pill ps-5 border-0"
+                       placeholder="Search by username, email or ID..." autocomplete="off">
+            </div>
         </div>
-    }
 
-    <table class="table table-hover shadow-sm mt-4">
-        <thead class="table-primary">
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var user in Model)
-            {
-                <tr>
-                    <td>@user.Id</td>
-                    <td>@user.UserName</td>
-                    <td>@user.Email</td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@user.Id" class="btn btn-info btn-sm">Details</a>
-                        <a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+        <!-- Users Table -->
+        <div class="bg-white rounded-4 shadow-sm overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="usersTable">
+                    <thead class="bg-light text-secondary small text-uppercase fw-semibold">
+                        <tr>
+                            <th class="ps-4 py-3">User</th>
+                            <th class="py-3">Username</th>
+                            <th class="py-3">Email</th>
+                            <th class="py-3">Status</th>
+                            <th class="text-end pe-4 py-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <span class="material-icons" style="font-size:64px;opacity:0.3;">people_alt</span>
+                                    <p class="mt-3 fs-5">No users found</p>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var user in Model)
+                            {
+                                var isAdmin = User.IsInRole("Admin") && user.Email == User.Identity?.Name;
+                                <tr class="border-bottom">
+                                    <td class="ps-4 py-4">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
+                                                 style="width:48px;height:48px;font-size:20px;">
+                                                @(string.IsNullOrEmpty(user.UserName) ? "?" : user.UserName.Substring(0, 1).ToUpper())
+                                            </div>
+                                         
+                                        </div>
+                                    </td>
+                                    <td class="fw-medium">@user.UserName</td>
+                                    <td>
+                                        <a href="mailto:@user.Email" class="text-primary text-decoration-none">@user.Email</a>
+                                    </td>
+                                    <td>
+                                        @if (isAdmin)
+                                        {
+                                            <span class="badge bg-danger text-white rounded-pill px-3 py-2">Admin</span>
+                                        }
+                                       
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark rounded-pill px-3 py-2">Client</span>
+                                        }
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="d-flex gap-2 justify-content-end">
+                                            <a asp-action="Details" asp-route-id="@user.Id"
+                                               class="btn btn-sm btn-outline-primary rounded-pill px-4 shadow-sm">
+                                                <span class="material-icons me-1" style="font-size:18px;">visibility</span>
+                                                Details
+                                            </a>
+                                            @if (!isAdmin)
+                                            {
+                                                <a asp-action="Delete" asp-route-id="@user.Id"
+                                                   class="btn btn-sm btn-outline-danger rounded-pill px-4 shadow-sm">
+                                                    <span class="material-icons me-1" style="font-size:18px;">delete</span>
+                                                    Delete
+                                                </a>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-5">
+            <p class="text-muted">
+                Total registered users: <strong class="text-primary fs-4">@Model.Count()</strong>
+            </p>
+        </div>
+    </div>
 </div>
+
+<!-- Fonts & Icons -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+        background: #f9fafb;
+    }
+
+    .bg-gray-50 {
+        background: #f9fafb;
+    }
+
+    .table tr:hover {
+        background: #f8f9ff !important;
+    }
+
+    .btn {
+        transition: all 0.2s;
+    }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+    .form-control:focus {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        border-color: #0d6efd;
+    }
+</style>
+
+<script>
+    // Live search
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        const term = this.value.toLowerCase();
+        document.querySelectorAll('#usersTable tbody tr').forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(term) ? '' : 'none';
+        });
+    });
+</script>

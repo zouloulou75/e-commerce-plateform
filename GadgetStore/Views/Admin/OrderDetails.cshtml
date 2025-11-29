@@ -1,69 +1,217 @@
 ﻿@model GadgetStore.Models.Order
 
 @{
-    ViewData["Title"] = $"Order Details - Order ID: {Model.Id}";
+    ViewData["Title"] = "Order #" + Model.Id;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1 class="mb-4 text-primary">Order Details</h1>
+<div class="min-vh-100 bg-gray-50">
+    <div class="container py-5" style="max-width: 1200px;">
 
-<!-- Customer Information Section -->
-<div class="card mb-4">
-    <div class="card-header bg-primary text-white">
-        <h4>Customer Information</h4>
-    </div>
-    <div class="card-body">
-        <p><strong>Name:</strong> @Model.CustomerName</p>
-        <p><strong>Email:</strong> @Model.Email</p>
-        <p><strong>Phone:</strong> @Model.Phone</p>
-        <p><strong>Address:</strong> @Model.Address</p>
+        <!-- Header -->
+        <div class="d-flex align-items-center justify-content-between mb-5">
+            <div class="d-flex align-items-center gap-4">
+                <a href="/Admin/Orders" class="text-decoration-none">
+                    <div class="bg-white rounded-circle p-2 shadow-sm">
+                        <span class="material-icons text-primary" style="font-size: 24px;">arrow_back</span>
+                    </div>
+                </a>
+                <div>
+                    <h1 class="h3 fw-bold text-dark mb-1">Order #@Model.Id</h1>
+                    <p class="text-muted mb-0 small">
+                        Placed on @Model.OrderDate.ToString("dddd, MMMM dd, yyyy") at @Model.OrderDate.ToString("h:mm tt")
+                    </p>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge rounded-pill px-4 py-2 fs-6 fw-medium
+                     @(Model.PaymentMethod.Contains("Card") ? "bg-success text-white" : "bg-info text-white")">
+                    <span class="material-icons me-2" style="font-size:18px;">credit_card</span>
+                    @Model.PaymentMethod
+                </span>
+            </div>
+        </div>
+
+        <div class="row g-5">
+
+            <!-- Customer Info -->
+            <div class="col-lg-5">
+                <div class="bg-white rounded-4 shadow-sm p-5">
+                    <h5 class="fw-bold text-primary mb-4 d-flex align-items-center gap-2">
+                        <span class="material-icons">person_outline</span>
+                        Customer Details
+                    </h5>
+                    <div class="space-y-4">
+                        <div>
+                            <small class="text-muted text-uppercase fw-semibold">Name</small>
+                            <p class="fs-5 fw-medium mb-0">@Model.CustomerName</p>
+                        </div>
+                        <hr class="my-3 opacity-10">
+                        <div>
+                            <small class="text-muted text-uppercase fw-semibold">Email</small>
+                            <p class="mb-0">
+                                <a href="mailto:@Model.Email" class="text-primary text-decoration-none">@Model.Email</a>
+                            </p>
+                        </div>
+                        <hr class="my-3 opacity-10">
+                        <div>
+                            <small class="text-muted text-uppercase fw-semibold">Phone</small>
+                            <p class="mb-0">@Model.Phone</p>
+                        </div>
+                        <hr class="my-3 opacity-10">
+                        <div>
+                            <small class="text-muted text-uppercase fw-semibold">Shipping Address</small>
+                            <p class="mb-0 lh-lg">@Model.Address</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Items & Summary -->
+            <div class="col-lg-7">
+
+                <!-- Items Table -->
+                <div class="bg-white rounded-4 shadow-sm overflow-hidden mb-4">
+                    <div class="p-4 bg-light border-bottom">
+                        <h5 class="fw-bold mb-0 d-flex align-items-center gap-2 text-dark">
+                            <span class="material-icons text-primary">shopping_bag</span>
+                            Items Ordered (@Model.OrderItems.Count)
+                        </h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-secondary small text-uppercase fw-semibold">
+                                <tr>
+                                    <th class="ps-4 py-3">Product</th>
+                                    <th class="text-center py-3">Quantity</th>
+                                    <th class="text-end py-3">Unit Price</th>
+                                    <th class="text-end pe-4 py-3">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (!Model.OrderItems.Any())
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-center py-5 text-muted">
+                                            <span class="material-icons" style="font-size:48px;">inventory_2</span>
+                                            <p class="mt-2">No items in this order</p>
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var item in Model.OrderItems)
+                                    {
+                                        var lineTotal = item.Quantity * item.Price;
+                                        var product = item.Product; // grâce à l'Include dans le contrôleur
+
+                                        <tr class="border-bottom">
+                                            <td class="ps-4 py-3">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    @if (product?.ImageUrl != null)
+                                                    {
+                                                        <img src="@product.ImageUrl"
+                                                             class="rounded-3 shadow-sm"
+                                                             style="width:56px; height:56px; object-fit:cover;">
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="bg-light rounded-3 d-flex align-items-center justify-content-center"
+                                                             style="width:56px; height:56px;">
+                                                            <span class="material-icons text-muted">image</span>
+                                                        </div>
+                                                    }
+                                                    <div>
+                                                        <div class="fw-semibold">
+                                                            @(product?.Name ?? $"Product #{item.ProductId}")
+                                                        </div>
+                                                        <small class="text-muted">ID: #@item.ProductId</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-primary rounded-pill px-3 py-2 fw-medium">@item.Quantity</span>
+                                            </td>
+                                            <td class="text-end text-success fw-medium">@item.Price.ToString("C2")</td>
+                                            <td class="text-end pe-4 fw-bold text-dark">@lineTotal.ToString("C2")</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Payment Summary -->
+                <div class="bg-white rounded-4 shadow-sm p-5">
+                    <h5 class="fw-bold mb-4 d-flex align-items-center gap-2 text-primary">
+                        <span class="material-icons">receipt_long</span>
+                        Payment Summary
+                    </h5>
+                    <div class="row g-4 text-lg">
+                        <div class="col-6">
+                            <small class="text-muted">Total Items</small>
+                            <p class="fs-4 fw-bold mb-0">@Model.OrderItems.Sum(i => i.Quantity)</p>
+                        </div>
+                        <div class="col-6 text-end">
+                            <small class="text-muted">Subtotal</small>
+                            <p class="fs-4 fw-bold mb-0">@((Model.TotalAmount - 15m).ToString("C2"))</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Shipping</small>
+                            <p class="fs-4 fw-bold text-success mb-0">$15.00</p>
+                        </div>
+                        <div class="col-6 text-end">
+                            <small class="text-muted">Grand Total</small>
+                            <p class="fs-3 fw-black text-primary mb-0">@Model.TotalAmount.ToString("C2")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back Button -->
+        <div class="text-center mt-5">
+            <a href="/Admin/Orders" class="btn btn-outline-primary rounded-pill px-5 py-2 shadow-sm">
+                <span class="material-icons me-2">arrow_back</span>
+                Back to Orders List
+            </a>
+        </div>
     </div>
 </div>
 
-<!-- Order Information Section -->
-<div class="card mb-4">
-    <div class="card-header bg-success text-white">
-        <h4>Order Information</h4>
-    </div>
-    <div class="card-body">
-        <p><strong>Payment Method:</strong> @Model.PaymentMethod</p>
-        <p><strong>Total Amount:</strong> @Model.TotalAmount.ToString("C")</p>
-        <p><strong>Order Date:</strong> @Model.OrderDate.ToString("f")</p>
-    </div>
-</div>
+<!-- Design moderne -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
-<!-- Order Items Section -->
-<div class="card">
-    <div class="card-header bg-secondary text-white">
-        <h4>Order Items</h4>
-    </div>
-    <div class="card-body">
-        @if (!Model.OrderItems.Any())
-        {
-            <p>No items found in this order.</p>
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+        background: #f9fafb;
+    }
+
+    .bg-gray-50 {
+        background: #f9fafb;
+    }
+
+    .table tr:hover {
+        background: #f8f9ff !important;
+    }
+
+    .btn {
+        transition: all 0.2s;
+    }
+
+        .btn:hover {
+            transform: translateY(-2px);
         }
-        else
-        {
-            <table class="table table-striped">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Product ID</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.OrderItems)
-                    {
-                        <tr>
-                            <td>@item.ProductId</td>
-                            <td>@item.Quantity</td>
-                            <td>@item.Price.ToString("C")</td>
-                            <td>$@(item.Quantity * item.Price)</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-    </div>
-</div>
+
+    hr.opacity-10 {
+        opacity: 0.1;
+    }
+
+    .space-y-4 > * + * {
+        margin-top: 1rem;
+    }
+</style>

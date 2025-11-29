@@ -2,43 +2,173 @@
 
 @{
     ViewData["Title"] = "Edit Product";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
-    <h1 class="display-4 text-primary">Edit Product</h1>
+<div class="min-vh-100 bg-gray-50">
+    <div class="container py-5" style="max-width: 900px;">
 
-    <form asp-action="EditProduct" method="post" class="mt-3">
-        <input type="hidden" name="Id" value="@Model.Id" />
-        <div class="mb-3">
-            <label for="Name" class="form-label">Product Name</label>
-            <input type="text" name="Name" id="Name" class="form-control" value="@Model.Name" required />
+        <!-- Header -->
+        <div class="d-flex align-items-center justify-content-between mb-5">
+            <div class="d-flex align-items-center gap-4">
+                <a href="/Admin/Products" class="text-decoration-none">
+                    <div class="bg-white rounded-circle p-2 shadow-sm">
+                        <span class="material-icons text-primary" style="font-size: 24px;">arrow_back</span>
+                    </div>
+                </a>
+                <div>
+                    <h1 class="h4 fw-bold text-dark mb-1">Edit Product</h1>
+                    <p class="text-muted mb-0 small">ID: #@Model.Id</p>
+                </div>
+            </div>
+            <a href="/Admin/Products" class="btn btn-sm btn-outline-secondary rounded-pill px-4">
+                Cancel
+            </a>
         </div>
-        <div class="mb-3">
-            <label for="Description" class="form-label">Description</label>
-            <textarea name="Description" id="Description" class="form-control" rows="3">@Model.Description</textarea>
+
+        <!-- Success Message -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success rounded-3 shadow-sm d-flex align-items-center gap-3 mb-4">
+                <span class="material-icons text-success">check_circle</span>
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        <!-- Form Card -->
+        <div class="bg-white rounded-4 shadow-sm p-5">
+            <form asp-action="EditProduct" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+
+                <div class="row g-4">
+                    <!-- Left Column -->
+                    <div class="col-lg-7">
+
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label fw-semibold"></label>
+                            <input asp-for="Name" class="form-control form-control-lg rounded-3" placeholder="Product name" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label fw-semibold"></label>
+                            <textarea asp-for="Description" class="form-control rounded-3" rows="4" placeholder="Description (optional)"></textarea>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="Price" class="form-label fw-semibold"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">$</span>
+                                    <input asp-for="Price" class="form-control form-control-lg rounded-3" step="0.01" />
+                                </div>
+                                <span asp-validation-for="Price" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="CategoryId" class="form-label fw-semibold"></label>
+                                <select asp-for="CategoryId" class="form-select form-select-lg rounded-3"
+                                        asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))">
+                                    <option value="">Choose category</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label asp-for="ImageUrl" class="form-label fw-semibold"></label>
+                            <input asp-for="ImageUrl" class="form-control form-control-lg rounded-3"
+                                   placeholder="https://example.com/image.jpg" id="imageUrlInput" />
+                            <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Boutons petits et discrets -->
+                        <div class="d-flex gap-3 align-items-center">
+                            <button type="submit" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm">
+                                <span class="material-icons me-1" style="font-size:18px;">save</span>
+                                Save
+                            </button>
+                            <a href="/Admin/Products/Delete/@Model.Id"
+                               class="btn btn-outline-danger btn-sm rounded-pill px-4">
+                                <span class="material-icons me-1" style="font-size:18px;">delete</span>
+                                Delete
+                            </a>
+                            <a href="/Admin/Products" class="text-muted small ms-3 text-decoration-none">
+                                or cancel
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Preview -->
+                    <div class="col-lg-5">
+                        <div class="text-center">
+                            <h6 class="text-muted mb-3 fw-semibold">Preview</h6>
+                            <div class="border border-2 border-dashed rounded-4 p-4 bg-light" style="min-height: 360px;">
+                                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                {
+                                    <img src="@Model.ImageUrl" id-previewImg alt="Preview"
+                                         class="img-fluid rounded-3 shadow-sm" style="max-height: 320px; object-fit: contain;">
+                                }
+                                else
+                                {
+                                    <div id="previewImg" class="d-flex flex-column align-items-center justify-content-center h-100 text-muted">
+                                        <span class="material-icons mb-3" style="font-size: 72px; opacity: 0.3;">image</span>
+                                        <p class="mb-0 small">No image</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
-        <div class="mb-3">
-            <label for="Price" class="form-label">Price</label>
-            <input type="number" name="Price" id="Price" class="form-control" step="0.01" value="@Model.Price"
-                required />
-        </div>
-        <div class="mb-3">
-            <label for="CategoryId" class="form-label">Category</label>
-            <select name="CategoryId" id="CategoryId" class="form-select" required>
-                <option value="">Select a Category</option>
-                @foreach (var category in ViewBag.Categories as IEnumerable<GadgetStore.Models.Category>)
-                {
-                    <option value="@category.Id" selected="@(category.Id == Model.CategoryId ? "selected" : null)">
-                        @category.Name
-                    </option>
-                }
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="ImageUrl" class="form-label">Image URL</label>
-            <input type="text" name="ImageUrl" id="ImageUrl" class="form-control" value="@Model.ImageUrl" />
-        </div>
-        <button type="submit" class="btn btn-success">Save</button>
-        <a href="/Admin/Products" class="btn btn-secondary">Cancel</a>
-    </form>
+    </div>
 </div>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+        background: #f9fafb;
+    }
+
+    .bg-gray-50 {
+        background: #f9fafb;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #0d6efd !important;
+        box-shadow: 0 0 0 0.2rem rgba(13,110,253,.15) !important;
+    }
+</style>
+
+<script>
+    document.getElementById('imageUrlInput').addEventListener('input', function () {
+        const url = this.value.trim();
+        const preview = document.getElementById('previewImg');
+        if (url) {
+            preview.src = url;
+            preview.style.display = 'block';
+            preview.onerror = () => {
+                preview.src = '';
+                preview.outerHTML = `<div class="d-flex flex-column align-items-center justify-content-center h-100 text-muted">
+                    <span class="material-icons mb-3" style="font-size:72px;opacity:0.3;">broken_image</span>
+                    <p class="small">Invalid URL</p>
+                </div>`;
+            };
+        } else {
+            preview.outerHTML = `<div class="d-flex flex-column align-items-center justify-content-center h-100 text-muted">
+                <span class="material-icons mb-3" style="font-size:72px;opacity:0.3;">image</span>
+                <p class="small">No image</p>
+            </div>`;
+        }
+    });
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

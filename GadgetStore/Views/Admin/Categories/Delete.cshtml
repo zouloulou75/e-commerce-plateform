@@ -1,10 +1,88 @@
 @model GadgetStore.Models.Category
 
-<div class="container mt-5">
-    <h1 class="text-danger">Delete Category</h1>
-    <p>Are you sure you want to delete the category "<strong>@Model.Name</strong>"?</p>
-    <form method="post" action="/Admin/Categories/Delete/@Model.Id">
-        <button type="submit" class="btn btn-danger">Delete</button>
-        <a href="/Admin/Categories" class="btn btn-secondary">Cancel</a>
-    </form>
+@{
+    ViewData["Title"] = "Supprimer la categorie";
+}
+
+<div class="container py-5" style="max-width: 720px;">
+    <div class="d-flex align-items-center gap-4 mb-5">
+        <a href="/Admin/Categories" class="text-decoration-none">
+            <span class="material-icons" style="font-size:42px; color:#0d6efd;">arrow_back_ios_new</span>
+        </a>
+        <div>
+            <h1 class="display-6 fw-bold mb-1 d-flex align-items-center gap-3">
+                <span class="material-icons" style="font-size:48px; color:#0d6efd;">delete_forever</span>
+                Supprimer la categorie
+            </h1>
+            <p class="text-muted mb-0">Cette action est irreversible</p>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="card-header text-white text-center py-4"
+             style="background:linear-gradient(135deg, #0d6efd 0%, #4d94ff 100%);">
+            <h4 class="mb-0 fw-bold d-flex align-items-center justify-content-center gap-3">
+                <span class="material-icons" style="font-size:32px;">warning_amber</span>
+                Confirmation de suppression
+            </h4>
+        </div>
+
+        <div class="card-body p-5 text-center">
+            <div class="mb-5">
+                <span class="material-icons" style="font-size:90px; color:#0d6efd; opacity:0.6;">help_outline</span>
+            </div>
+
+            <h3 class="mb-4 text-dark">
+                Etes-vous sur de vouloir supprimer cette categorie ?
+            </h3>
+
+            <div class="bg-light rounded-4 p-4 mb-5 border-start border-5 border-primary">
+                <p class="mb-2 text-muted small text-uppercase fw-semibold">Categorie concernee</p>
+                <h4 class="fw-bold text-primary">
+                    <span class="material-icons align-middle me-2">folder_special</span>
+                    @Model.Name
+                </h4>
+                <p class="text-muted small mt-2">
+                    ID : <strong>#@Model.Id</strong>
+                </p>
+            </div>
+
+            <p class="text-primary fw-medium">
+                <span class="material-icons align-middle">info</span>
+                Tous les produits associes seront detachés de cette categorie.
+            </p>
+
+            <form method="post" asp-action="Delete" asp-route-id="@Model.Id" class="d-inline">
+                @Html.AntiForgeryToken()
+
+                <div class="d-flex justify-content-center gap-4 mt-5">
+                    <a asp-action="Index" class="btn btn-outline-secondary px-5 py-3 rounded-pill shadow-sm">
+                        <span class="material-icons me-2">cancel</span>
+                        Annuler
+                    </a>
+
+                    <button type="submit"
+                            class="btn px-5 py-3 rounded-pill shadow-sm d-flex align-items-center gap-2"
+                            style="background:#0d6efd; color:white; border:none; font-weight:500;">
+                        <span class="material-icons">check_circle</span>
+                        Oui supprimer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background: #f8f9ff;
+    }
+
+    .card {
+        box-shadow: 0 15px 40px rgba(13,110,253,0.18) !important;
+    }
+</style>

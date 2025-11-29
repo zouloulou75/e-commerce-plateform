@@ -1,29 +1,140 @@
 @model List<GadgetStore.Models.Category>
 
-<div class="container mt-5">
-    <h1 class="text-primary">Categories</h1>
-    <a href="/Admin/Categories/Create" class="btn btn-success mb-3">Add New Category</a>
+@{
+    ViewData["Title"] = "Categories";
+}
 
-    <table class="table table-bordered">
-        <thead class="table-primary">
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var category in Model)
+<div class="container mt-5" style="max-width: 1100px;">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="display-5 fw-bold text-dark mb-1 d-flex align-items-center gap-3">
+                <span class="material-icons" style="font-size: 48px; color: #1976d2;">category</span>
+                Categories
+            </h1>
+            <p class="text-muted mb-0">Manage your product categories</p>
+        </div>
+        <a href="/Admin/Categories/Create"
+           class="btn btn-primary text-white px-4 py-3 rounded shadow d-flex align-items-center gap-2"
+           style="background: #1976d2; text-transform: none; font-weight: 500; font-size: 1.1rem;">
+            <span class="material-icons">add_circle_outline</span>
+            Add New Category
+        </a>
+    </div>
+
+    <!-- Material Design Card -->
+    <div class="bg-white rounded-4 shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="px-5 py-4 text-white" style="background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold d-flex align-items-center gap-3">
+                    <span class="material-icons">list_alt</span>
+                    All Categories
+                </h5>
+                <span class="badge  bg-opacity-20 px-4 py-2 rounded-pill fs-6">
+                    @(Model?.Count ?? 0) items
+                </span>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="p-0">
+            @if (Model == null || !Model.Any())
             {
-                <tr>
-                    <td>@category.Id</td>
-                    <td>@category.Name</td>
-                    <td>
-                        <a href="/Admin/Categories/Edit/@category.Id" class="btn btn-warning btn-sm">Edit</a>
-                        <a href="/Admin/Categories/Delete/@category.Id" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
-                </tr>
+                <!-- Empty State -->
+                <div class="text-center py-6">
+                    <span class="material-icons" style="font-size: 90px; color: #e0e0e0;">inventory_2</span>
+                    <h4 class="mt-4 text-muted">No categories found</h4>
+                    <p class="text-muted mb-4">Get started by creating your first category</p>
+                    <a href="/Admin/Categories/Create"
+                       class="btn btn-outline-primary px-5 py-3 rounded-pill">
+                        <span class="material-icons">add</span> Create Category
+                    </a>
+                </div>
             }
-        </tbody>
-    </table>
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead>
+                            <tr class="text-muted small text-uppercase" style="letter-spacing: 0.8px;">
+                                <th class="ps-5 py-4">ID</th>
+                                <th class="py-4">Name</th>
+                                <th class="text-center py-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var category in Model)
+                            {
+                                <tr class="border-0" style="transition: background 0.2s;">
+                                    <td class="ps-5">
+                                        <span class="badge bg-light text-dark rounded-pill px-3 py-2"> #@category.Id </span>
+                                    </td>
+                                    <td class="fw-medium text-dark">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span class="material-icons text-primary">folder_open</span>
+                                            <span style="font-size: 1.1rem;">@category.Name</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <a href="/Admin/Categories/Edit/@category.Id"
+                                               class="btn btn-sm btn-light border shadow-sm"
+                                               data-bs-toggle="tooltip" title="Edit">
+                                                <span class="material-icons text-warning" style="font-size: 20px;">edit</span>
+                                            </a>
+                                            <a href="/Admin/Categories/Delete/@category.Id"
+                                               class="btn btn-sm btn-light border shadow-sm"
+                                               data-bs-toggle="tooltip" title="Delete"
+                                               onclick="return confirm('Delete &quot;@category.Name&quot;? This cannot be undone.')">
+                                                <span class="material-icons text-danger" style="font-size: 20px;">delete_forever</span>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-light border-top px-5 py-4">
+            <div class="d-flex justify-content-between text-muted small">
+                <span>Total: <strong>@(Model?.Count ?? 0)</strong> categories</span>
+                <span>Updated just now</span>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Required CDN Links (Add these to your _Layout.cshtml or here) -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background: #f8fafc;
+    }
+
+    .table tr:hover {
+        background-color: rgba(25, 118, 210, 0.04) !important;
+    }
+
+    .shadow-lg {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+    }
+
+    .rounded-4 {
+        border-radius: 1rem;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Bootstrap tooltips
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+    </script>
+}

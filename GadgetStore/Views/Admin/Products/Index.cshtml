@@ -1,44 +1,150 @@
 @model IEnumerable<GadgetStore.Models.Product>
 
 @{
-    ViewData["Title"] = "Manage Products";
+    ViewData["Title"] = "Products";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
-    <h1 class="display-4 text-primary">Products</h1>
-    <a href="/Admin/Products/Create" class="btn btn-primary mb-3">Add New Product</a>
+<div class="min-vh-100 bg-gray-50">
+    <div class="container py-5" style="max-width: 1400px;">
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success">
-            @TempData["SuccessMessage"]
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h1 class="h3 fw-bold text-dark mb-1">Products</h1>
+                <p class="text-muted mb-0">Manage your store inventory</p>
+            </div>
+            <a href="/Admin/Products/Create"
+               class="btn btn-primary rounded-pill px-5 py-3 shadow-sm d-flex align-items-center gap-2">
+                <span class="material-icons">add</span>
+                New Product
+            </a>
         </div>
+
+        <!-- Success Message -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success rounded-3 shadow-sm d-flex align-items-center gap-3 mb-4">
+                <span class="material-icons text-success">check_circle</span>
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        <!-- Search Bar -->
+        <div class="bg-white rounded-3 shadow-sm p-4 mb-4">
+            <div class="position-relative">
+                <span class="material-icons position-absolute top-50 start-4 translate-middle-y text-muted">search</span>
+                <input type="text" id="searchInput" class="form-control form-control-lg rounded-pill ps-5 border-0"
+                       placeholder="Search products..." autocomplete="off">
+            </div>
+        </div>
+
+        <!-- Products Table -->
+        <div class="bg-white rounded-3 shadow-sm overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="productsTable">
+                    <thead class="bg-light">
+                        <tr class="text-secondary small text-uppercase fw-semibold">
+                            <th class="ps-4 py-3">Product</th>
+                            <th class="py-3">Category</th>
+                            <th class="py-3">Price</th>
+                            <th class="text-end pe-4 py-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model)
+                        {
+                            <tr class="border-bottom">
+                                <td class="ps-4 py-4">
+                                    <div class="d-flex align-items-center gap-3">
+                                        @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                        {
+                                            <img src="@product.ImageUrl" alt="@product.Name"
+                                                 class="rounded-3 shadow-sm" style="width:60px; height:60px; object-fit:cover;">
+                                        }
+                                        else
+                                        {
+                                            <div class="bg-light rounded-3 d-flex align-items-center justify-content-center shadow-sm"
+                                                 style="width:60px; height:60px;">
+                                                <span class="material-icons text-muted">image</span>
+                                            </div>
+                                        }
+                                        <div>
+                                            <div class="fw-semibold text-dark">@product.Name</div>
+                                            <small class="text-muted">ID: #@product.Id</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-muted">
+                                    @(product.Category?.Name ?? "—")
+                                </td>
+                              
+                                <td class="fw-bold text-success">$@product.Price.ToString("F2")</td>
+                                <td class="text-end pe-4">
+                                    <a href="/Admin/Products/Edit/@product.Id"
+                                       class="btn btn-sm btn-light border shadow-sm">
+                                        <span class="material-icons text-warning">edit</span>
+                                    </a>
+                                    <a href="/Admin/Products/Delete/@product.Id"
+                                       class="btn btn-sm btn-light border shadow-sm">
+                                        <span class="material-icons text-danger">delete</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-5">
+            <p class="text-muted">
+                Total: <strong class="text-primary fs-4">@Model.Count()</strong> products
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Modern Fonts & Icons -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+        background: #f9fafb;
     }
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Category</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in Model)
-            {
-                <tr>
-                    <td>@product.Id</td>
-                    <td>@product.Name</td>
-                    <td>$@product.Price</td>
-                    <td>@product.Category?.Name</td>
-                    <td>
-                        <a href="/Admin/Products/Edit/@product.Id" class="btn btn-warning btn-sm">Edit</a>
-                        <a href="/Admin/Products/Delete/@product.Id" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
+    .bg-gray-50 {
+        background: #f9fafb;
+    }
+
+    .table tr:hover {
+        background: #f8f9ff !important;
+    }
+
+    .btn {
+        transition: all 0.2s;
+    }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+    .form-control:focus {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        border-color: #0d6efd;
+    }
+</style>
+
+<script>
+    // Live search
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        const term = this.value.toLowerCase();
+        document.querySelectorAll('#productsTable tbody tr').forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(term) ? '' : 'none';
+        });
+    });
+</script>

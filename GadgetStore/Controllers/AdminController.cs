@@ -262,5 +262,105 @@ namespace GadgetStore.Controllers
             return RedirectToAction("Products");
         }
 
+
+
+        [HttpGet("Statistics")]
+        public IActionResult Statistics()
+        {
+            var now = DateTime.Now;
+            var startOfMonth = new DateTime(now.Year, now.Month, 1);
+            var start30Days = now.AddDays(-30);
+            var start7Days = now.AddDays(-7);
+
+            // 1. Total revenue (all time + last 30 days + last 7 days)
+            var totalRevenueAllTime = _context.Orders.Sum(o => o.TotalAmount);
+            var revenueLast30 = _context.Orders.Where(o => o.OrderDate >= start30Days).Sum(o => o.TotalAmount);
+            var revenueLast7 = _context.Orders.Where(o => o.OrderDate >= start7Days).Sum(o => o.TotalAmount);
+
+            // 2. Order counts
+            var totalOrders = _context.Orders.Count();
+            var ordersLast30 = _context.Orders.Count(o => o.OrderDate >= start30Days);
+            var ordersLast7 = _context.Orders.Count(o => o.OrderDate >= start7Days);
+
+            // 3. Average order value
+            var aovAllTime = totalOrders > 0 ? totalRevenueAllTime / totalOrders : 0;
+            var aovLast30 = ordersLast30 > 0 ? revenueLast30 / ordersLast30 : 0;
+
+            // 4. Total customers (unique emails who placed an order)
+            var totalCustomers = _context.Orders.Select(o => o.Email).Distinct().Count();
+
+            // 5. New customers last 30 days
+            var newCustomersLast30 = _context.Orders
+                .Where(o => o.OrderDate >= start30Days)
+                .GroupBy(o => o.Email)
+                .Where(g => g.Count() == 1 && g.Key != null)
+                .Count();
+
+            // 6. Top 5 best-selling products (all time)
+            var topProducts = _context.OrderItems
+                .GroupBy(oi => oi.ProductId)
+                .Select(g => new
+                {
+                    Product = _context.Products.FirstOrDefault(p => p.Id == g.Key),
+                    QuantitySold = g.Sum(oi => oi.Quantity),
+                    Revenue = g.Sum(oi => oi.Price * oi.Quantity)
+                })
+                .OrderByDescending(x => x.QuantitySold)
+                .Take(5)
+                .ToList();
+
+            // 7. Daily revenue for chart (last 30 days)
+            var dailyRevenue = _context.Orders
+                .Where(o => o.OrderDate >= start30Days)
+                .GroupBy(o => o.OrderDate.Date)
+                .Select(g => new
+                {
+                    Date = g.Key,
+                    Revenue = g.Sum(o => o.TotalAmount)
+                })
+                .OrderBy(x => x.Date)
+                .ToList();
+
+            // 8. Revenue by category (all time)
+            var revenueByCategory = _context.OrderItems
+                .Include(oi => oi.Product)
+                .ThenInclude(p => p.Category)
+                .GroupBy(oi => oi.Product.Category.Name)
+                .Select(g => new
+                {
+                    Category = g.Key,
+                    Revenue = g.Sum(oi => oi.Price * oi.Quantity)
+                })
+                .OrderByDescending(x => x.Revenue)
+                .ToList();
+
+        
+
+            // Pass everything to the view
+            ViewBag.TotalRevenueAllTime = totalRevenueAllTime;
+            ViewBag.RevenueLast30Days = revenueLast30;
+            ViewBag.RevenueLast7Days = revenueLast7;
+
+            ViewBag.TotalOrders = totalOrders;
+            ViewBag.OrdersLast30Days = ordersLast30;
+            ViewBag.OrdersLast7Days = ordersLast7;
+
+            ViewBag.AOVAllTime = aovAllTime;
+            ViewBag.AOVLast30Days = aovLast30;
+
+            ViewBag.TotalCustomers = totalCustomers;
+            ViewBag.NewCustomersLast30 = newCustomersLast30;
+
+            ViewBag.TopProducts = topProducts;
+            ViewBag.DailyRevenue = dailyRevenue;
+            ViewBag.RevenueByCategory = revenueByCategory;
+
+            return View();
+        }
+
+
     }
+
+
+
 }

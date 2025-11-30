@@ -1,9 +1,13 @@
-using Microsoft.AspNetCore.Mvc;
 using GadgetStore.Data;
 using GadgetStore.Models;
+using GadgetStore.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
+using GadgetStore.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GadgetStore.Controllers
 {
@@ -31,9 +35,8 @@ namespace GadgetStore.Controllers
             ViewBag.Total = total;
             return View(cart);
         }
-
         [HttpPost("process")]
-        public IActionResult ProcessOrder(string customerName, string email, string address, string phone, string paymentMethod)
+        public async Task<IActionResult> ProcessOrder(string customerName, string email, string address, string phone, string paymentMethod)
         {
             var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
             if (!cart.Any())
@@ -58,12 +61,27 @@ namespace GadgetStore.Controllers
             };
 
             _context.Orders.Add(order);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+
+            try
+            {
+                var emailService = HttpContext.RequestServices.GetRequiredService<IEmailService>();
+                await emailService.SendOrderConfirmationAsync(
+                    email,
+                    customerName,
+                    order.Id,
+                    order.TotalAmount
+                );
+            }
+            catch (Exception ex)
+            {
+                // Log the error but don't prevent the order from being placed
+            }
 
             // Clear the cart
             HttpContext.Session.Remove("Cart");
 
-            TempData["SuccessMessage"] = $"Thank you, {customerName}! Your order has been placed.";
+            TempData["SuccessMessage"] = $"Thank you, {customerName}! Your order has been placed. A confirmation email has been sent to {email}.";
             return RedirectToAction("Index", "Products");
         }
 

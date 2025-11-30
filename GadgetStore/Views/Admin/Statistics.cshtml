@@ -1,0 +1,379 @@
+﻿@model dynamic  // Since no specific model, use dynamic for ViewBag access
+
+@{
+    ViewData["Title"] = "Store Statistics";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="min-vh-100 bg-gray-50">
+    <div class="container py-5" style="max-width: 1400px;">
+
+        <!-- Header -->
+        <div class="d-flex align-items-center justify-content-between mb-5">
+            <div class="d-flex align-items-center gap-4">
+                <a href="/Admin/Dashboard" class="text-decoration-none">
+                    <div class="bg-white rounded-circle p-2 shadow-sm">
+                        <span class="material-icons text-primary" style="font-size: 24px;">arrow_back</span>
+                    </div>
+                </a>
+                <div>
+                    <h1 class="h3 fw-bold text-dark mb-1">Store Statistics</h1>
+                    <p class="text-muted mb-0">Key metrics and analytics for your store</p>
+                </div>
+            </div>
+            <button class="btn btn-sm btn-outline-primary rounded-pill px-4 shadow-sm">
+                <span class="material-icons me-1" style="font-size:18px;">refresh</span>
+                Refresh Data
+            </button>
+        </div>
+
+        <!-- Key Metrics Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-lg-3 col-md-6">
+                <div class="bg-white rounded-4 shadow-sm p-4 border-start border-5 border-primary hover-lift">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h2 class="fw-black text-primary mb-1">@ViewBag.TotalRevenueAllTime.ToString("C0")</h2>
+                            <p class="text-muted mb-0 small">Total Revenue (All Time)</p>
+                        </div>
+                        <span class="material-icons text-primary" style="font-size:48px;opacity:0.2;">trending_up</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="bg-white rounded-4 shadow-sm p-4 border-start border-5 border-success hover-lift">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h2 class="fw-black text-success mb-1">@ViewBag.RevenueLast30Days.ToString("C0")</h2>
+                            <p class="text-muted mb-0 small">Revenue (Last 30 Days)</p>
+                        </div>
+                        <span class="material-icons text-success" style="font-size:48px;opacity:0.2;">bar_chart</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="bg-white rounded-4 shadow-sm p-4 border-start border-5 border-info hover-lift">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h2 class="fw-black text-info mb-1">@ViewBag.TotalOrders</h2>
+                            <p class="text-muted mb-0 small">Total Orders</p>
+                        </div>
+                        <span class="material-icons text-info" style="font-size:48px;opacity:0.2;">shopping_cart</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="bg-white rounded-4 shadow-sm p-4 border-start border-5 border-warning hover-lift">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h2 class="fw-black text-warning mb-1">@ViewBag.TotalCustomers</h2>
+                            <p class="text-muted mb-0 small">Total Customers</p>
+                        </div>
+                        <span class="material-icons text-warning" style="font-size:48px;opacity:0.2;">people_alt</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Metrics Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-lg-4">
+                <div class="bg-white rounded-4 shadow-sm p-4 border-start border-5 border-secondary hover-lift">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h2 class="fw-black text-secondary mb-1">@ViewBag.RevenueLast7Days.ToString("C0")</h2>
+                            <p class="text-muted mb-0 small">Revenue (Last 7 Days)</p>
+                        </div>
+                        <span class="material-icons text-secondary" style="font-size:48px;opacity:0.2;">calendar_today</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="bg-white rounded-4 shadow-sm p-4 border-start border-5 border-purple hover-lift">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h2 class="fw-black text-purple mb-1">@ViewBag.OrdersLast30Days</h2>
+                            <p class="text-muted mb-0 small">Orders (Last 30 Days)</p>
+                        </div>
+                        <span class="material-icons text-purple" style="font-size:48px;opacity:0.2;">bar_chart</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="bg-white rounded-4 shadow-sm p-4 border-start border-5 border-orange hover-lift">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h2 class="fw-black text-orange mb-1">@ViewBag.NewCustomersLast30</h2>
+                            <p class="text-muted mb-0 small">New Customers (Last 30 Days)</p>
+                        </div>
+                        <span class="material-icons text-orange" style="font-size:48px;opacity:0.2;">person_add</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts & Tables Row -->
+        <div class="row g-4">
+
+            <!-- Daily Revenue Chart -->
+            <div class="col-lg-6">
+                <div class="bg-white rounded-4 shadow-sm p-5">
+                    <h5 class="fw-bold mb-4 d-flex align-items-center gap-2 text-primary">
+                        <span class="material-icons">timeline</span>
+                        Daily Revenue (Last 30 Days)
+                    </h5>
+                    <canvas id="revenueChart" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Revenue by Category Chart -->
+            <div class="col-lg-6">
+                <div class="bg-white rounded-4 shadow-sm p-5">
+                    <h5 class="fw-bold mb-4 d-flex align-items-center gap-2 text-primary">
+                        <span class="material-icons">pie_chart</span>
+                        Revenue by Category
+                    </h5>
+                    <canvas id="categoryChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Products & Recent Orders Row -->
+        <div class="row g-4 mt-4">
+
+            <!-- Top Products Table -->
+            <div class="col-lg-6">
+                <div class="bg-white rounded-4 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-light border-bottom">
+                        <h5 class="fw-bold mb-0 d-flex align-items-center gap-2 text-dark">
+                            <span class="material-icons text-primary">star</span>
+                            Top 5 Best-Selling Products
+                        </h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-secondary small text-uppercase fw-semibold">
+                                <tr>
+                                    <th class="ps-4">Product</th>
+                                    <th class="text-center">Sold</th>
+                                    <th class="text-end pe-4">Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (ViewBag.TopProducts != null && ViewBag.TopProducts.Count > 0)
+                                {
+                                    foreach (var p in ViewBag.TopProducts)
+                                    {
+                                        <tr class="border-bottom">
+                                            <td class="ps-4">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    @if (!string.IsNullOrEmpty(p.Product.ImageUrl))
+                                                    {
+                                                        <img src="@p.Product.ImageUrl" class="rounded-3 shadow-sm" style="width:48px;height:48px;object-fit:cover;">
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="bg-light rounded-3 d-flex align-items-center justify-content-center" style="width:48px;height:48px;">
+                                                            <span class="material-icons text-muted">image</span>
+                                                        </div>
+                                                    }
+                                                    <div>
+                                                        <div class="fw-semibold">@p.Product.Name</div>
+                                                        <small class="text-muted">ID: #@p.Product.Id</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-success rounded-pill px-3 py-2">@p.QuantitySold</span>
+                                            </td>
+                                            <td class="text-end pe-4 fw-bold text-success">@p.Revenue.ToString("C2")</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center py-5 text-muted">No sales data yet</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders Table -->
+            <div class="col-lg-6">
+                <div class="bg-white rounded-4 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-light border-bottom">
+                        <h5 class="fw-bold mb-0 d-flex align-items-center gap-2 text-dark">
+                            <span class="material-icons text-primary">history</span>
+                            Recent Orders
+                        </h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-secondary small text-uppercase fw-semibold">
+                                <tr>
+                                    <th class="ps-4">Order</th>
+                                    <th>Customer</th>
+                                    <th>Total</th>
+                                    <th class="text-end pe-4">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (ViewBag.RecentOrders != null && ViewBag.RecentOrders.Count > 0)
+                                {
+                                    foreach (var order in ViewBag.RecentOrders)
+                                    {
+                                        <tr class="border-bottom">
+                                            <td class="ps-4 fw-bold text-primary">#@order.Id</td>
+                                            <td>@order.CustomerName</td>
+                                            <td class="text-success fw-bold">@order.TotalAmount.ToString("C2")</td>
+                                            <td class="text-end pe-4 text-muted small">@order.OrderDate.ToString("MMM dd, yyyy h:mm tt")</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-center py-5 text-muted">No recent orders</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Contacts -->
+        <div class="bg-white rounded-4 shadow-sm overflow-hidden mt-5">
+            <div class="p-4 bg-light border-bottom">
+                <h5 class="fw-bold mb-0 d-flex align-items-center gap-2 text-dark">
+                    <span class="material-icons text-primary">mail_outline</span>
+                    Recent Contact Messages
+                </h5>
+            </div>
+            <div class="p-4">
+                @if (ViewBag.RecentContacts != null && ViewBag.RecentContacts.Count > 0)
+                {
+                    foreach (var c in ViewBag.RecentContacts)
+                    {
+                        <div class="mb-3 border-bottom pb-2">
+                            <strong>@c.Name</strong> (@c.Email)<br />
+                            <small class="text-muted">@c.SubmittedAt.ToString("MMM dd, yyyy HH:mm")</small>
+                            <p class="mt-1 mb-0 text-muted">@c.Message</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-center py-5 text-muted">No messages yet.</p>
+                }
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Fonts & Icons -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+        background: #f9fafb;
+    }
+
+    .bg-gray-50 {
+        background: #f9fafb;
+    }
+
+    .hover-lift {
+        transition: all 0.3s;
+    }
+
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+        }
+
+    .border-start {
+        border-left-width: 5px !important;
+    }
+
+    .table tr:hover {
+        background: #f8f9ff !important;
+    }
+
+    .fs-3 {
+        font-size: 1.875rem !important;
+    }
+
+    .text-purple {
+        color: #6f42c1 !important;
+    }
+
+    .text-orange {
+        color: #fd7e14 !important;
+    }
+
+    .border-purple {
+        border-color: #6f42c1 !important;
+    }
+
+    .border-orange {
+        border-color: #fd7e14 !important;
+    }
+</style>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Revenue Chart
+        const dailyData = @Html.Raw(Json.Serialize(ViewBag.DailyRevenue));
+        new Chart(document.getElementById('revenueChart'), {
+            type: 'line',
+            data: {
+                labels: dailyData.map(d => new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+                datasets: [{
+                    label: 'Daily Revenue',
+                    data: dailyData.map(d => d.revenue),
+                    borderColor: '#0d6efd',
+                    backgroundColor: 'rgba(13,110,253,0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true, ticks: { callback: v => '$' + v.toLocaleString() } } },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // Category Chart
+        const catData = @Html.Raw(Json.Serialize(ViewBag.RevenueByCategory));
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'doughnut',
+            data: {
+                labels: catData.map(c => c.category),
+                datasets: [{
+                    data: catData.map(c => c.revenue),
+                    backgroundColor: ['#0d6efd', '#198754', '#0dcaf0', '#ffc107', '#dc3545', '#6c757d']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom', labels: { font: { size: 14 } } } }
+            }
+        });
+    </script>
+}

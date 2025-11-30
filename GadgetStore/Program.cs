@@ -1,13 +1,15 @@
 using GadgetStore.Data;
-using Microsoft.EntityFrameworkCore;
+using GadgetStore.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-
+// Add email service
+builder.Services.AddScoped<IEmailService, EmailService>();
 // Configure EF Core and Identity
 builder.Services.AddDbContext<GadgetStoreDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

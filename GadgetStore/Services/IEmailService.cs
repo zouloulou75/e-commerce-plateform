@@ -1,5 +1,4 @@
-﻿// Services/IEmailService.cs
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace GadgetStore.Services
 {

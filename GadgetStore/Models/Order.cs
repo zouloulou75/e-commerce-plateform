@@ -1,6 +1,19 @@
+// Models/Order.cs
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace GadgetStore.Models
 {
+    public enum OrderStatus
+    {
+        Pending,
+        Processing,
+        Shipped,
+        Delivered,
+        Cancelled
+    }
+
     public class Order
     {
         public int Id { get; set; }
@@ -12,5 +25,9 @@ namespace GadgetStore.Models
         public decimal TotalAmount { get; set; }
         public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
         public DateTime OrderDate { get; set; } = DateTime.Now;
+        public OrderStatus Status { get; set; } = OrderStatus.Pending;
+       
+        public DateTime? ShippedDate { get; set; }
+        public DateTime? DeliveredDate { get; set; }
     }
 }

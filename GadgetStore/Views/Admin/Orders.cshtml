@@ -18,6 +18,13 @@
                 <span class="fs-4 fw-bold text-primary">@Model.Count()</span>
                 <small class="text-muted d-block">total orders</small>
             </div>
+            <!-- Add this inside the header section, next to the search bar or title -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <a asp-action="ExportToExcel" class="btn btn-success btn-lg rounded-pill shadow-sm">
+                    <span class="material-icons me-2" style="font-size:20px;">download</span>
+                    Export to Excel
+                </a>
+            </div>
         </div>
 
         <!-- Search Bar -->
@@ -93,6 +100,9 @@
                                            class="btn btn-sm btn-primary rounded-pill px-4 shadow-sm">
                                             <span class="material-icons me-1" style="font-size:18px;">visibility</span>
                                             View
+                                        </a>
+                                        <a href="/Admin/Orders/Invoice/@order.Id" class="btn btn-sm btn-danger rounded-pill px-3 ms-2">
+                                            <span class="material-icons" style="font-size:16px;">picture_as_pdf</span>
                                         </a>
                                     </td>
                                 </tr>

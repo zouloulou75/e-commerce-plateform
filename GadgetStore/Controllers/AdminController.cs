@@ -1,10 +1,12 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using ClosedXML.Excel;
 using GadgetStore.Data;
 using GadgetStore.Models;
-using System.Linq;
+using GadgetStore.Services;  
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using System.Linq;
+using QuestPDF.Fluent;  // For Document.Create()
 namespace GadgetStore.Controllers
 {
     [Authorize(Roles = "Admin")]
@@ -356,6 +358,87 @@ namespace GadgetStore.Controllers
             ViewBag.RevenueByCategory = revenueByCategory;
 
             return View();
+        }
+        [HttpGet("ExportToExcel")]
+        public IActionResult ExportToExcel()
+        {
+            var orders = _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .OrderByDescending(o => o.OrderDate)
+                .ToList();
+
+            using var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("Orders");
+
+            // Header Row
+            worksheet.Cell(1, 1).Value = "Order ID";
+            worksheet.Cell(1, 2).Value = "Date";
+            worksheet.Cell(1, 3).Value = "Customer";
+            worksheet.Cell(1, 4).Value = "Email";
+            worksheet.Cell(1, 5).Value = "Phone";
+            worksheet.Cell(1, 6).Value = "Total Amount";
+            worksheet.Cell(1, 7).Value = "Payment Method";
+            worksheet.Cell(1, 8).Value = "Items Count";
+
+            var headerRange = worksheet.Range("A1:H1");
+            headerRange.Style.Font.Bold = true;
+            headerRange.Style.Fill.BackgroundColor = XLColor.LightGreen;
+            headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+            // Data Rows
+            int row = 2;
+            foreach (var order in orders)
+            {
+                var itemsCount = order.OrderItems?.Sum(i => i.Quantity) ?? 0;
+
+                worksheet.Cell(row, 1).Value = order.Id;
+                worksheet.Cell(row, 2).Value = order.OrderDate.ToString("yyyy-MM-dd HH:mm");
+                worksheet.Cell(row, 3).Value = order.CustomerName;
+                worksheet.Cell(row, 4).Value = order.Email;
+                worksheet.Cell(row, 5).Value = order.Phone;
+                worksheet.Cell(row, 6).Value = order.TotalAmount;
+                worksheet.Cell(row, 7).Value = order.PaymentMethod;
+                worksheet.Cell(row, 8).Value = itemsCount;
+
+                // Format currency
+                worksheet.Cell(row, 6).Style.NumberFormat.Format = "$#,##0.00";
+
+                row++;
+            }
+
+            // Auto-fit columns
+            worksheet.Columns().AdjustToContents();
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            var content = stream.ToArray();
+
+            return File(
+                fileContents: content,
+                contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                fileDownloadName: $"GadgetStore_Orders_{DateTime.Now:yyyyMMdd_HHmm}.xlsx"
+            );
+        }
+        [HttpGet("Orders/Invoice/{id}")]
+        public IActionResult DownloadInvoice(int id)
+        {
+            var order = _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .ThenInclude(p => p.Category)
+                .FirstOrDefault(o => o.Id == id);
+
+            if (order == null) return NotFound();
+
+            var document = new InvoiceDocument(order);
+            var pdfBytes = QuestPDF.Fluent.Document.Create(container => document.Compose(container)).GeneratePdf();
+
+            return File(
+                pdfBytes,
+                "application/pdf",
+                $"Invoice_{order.Id}_{DateTime.Now:yyyyMMdd}.pdf"
+            );
         }
 
 

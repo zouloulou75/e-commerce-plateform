@@ -1,0 +1,159 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<div class="login-container">
+    <div class="login-box">
+
+        <div class="avatar">
+            <i class="fas fa-user"></i>
+        </div>
+
+        <form method="post" class="login-form">
+            <div asp-validation-summary="ModelOnly" class="text-danger text-center small mb-2"></div>
+
+            <!-- Email -->
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input asp-for="Input.Email" class="form-control" placeholder="Email or username" autocomplete="username" />
+            </div>
+            <span asp-validation-for="Input.Email" class="text-danger small"></span>
+
+            <!-- Password -->
+            <div class="input-group mt-2">
+                <i class="fas fa-lock"></i>
+                <input asp-for="Input.Password" class="form-control" placeholder="Password" autocomplete="current-password" />
+            </div>
+            <span asp-validation-for="Input.Password" class="text-danger small"></span>
+
+            <!-- Remember me + Forgot -->
+            <div class="d-flex justify-content-between align-items-center mt-2 mb-2">
+                <label class="form-check d-flex align-items-center gap-2 text-secondary small">
+                    <input class="form-check-input mt-0" asp-for="Input.RememberMe" />
+                    <span>Remember me</span>
+                </label>
+                <a asp-page="./ForgotPassword" class="text-primary small text-decoration-none">Forgot password?</a>
+            </div>
+
+            <!-- Bouton Login -->
+            <button type="submit" class="btn-login">Login</button>
+
+            <!-- Sign up - sans espace en bas -->
+            <div class="text-center mt-2 mb-0">
+                <small class="text-secondary">New here? </small>
+                <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl"
+                   class="text-primary fw-semibold text-decoration-none">Sign up</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        background: #fff;
+        height: 100%;
+        font-family: 'Segoe UI',sans-serif;
+    }
+
+    .login-container {
+        padding-top: 30px; /* bien collé à la navbar */
+        display: flex;
+        justify-content: center;
+    }
+
+    .login-box {
+        background: rgba(255,255,255,0.98);
+        border-radius: 28px;
+        padding: 32px 40px; /* padding horizontal généreux → largeur conservée */
+        width: 100%;
+        max-width: 420px; /* large comme avant */
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        border: 1px solid #e0e7ff;
+        
+    }
+
+    .avatar {
+        width: 72px;
+        height: 72px;
+        background: #5d8ffc;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px; /* réduit */
+        font-size: 2.1rem;
+        box-shadow: 0 8px 25px rgba(93,143,252,0.35);
+    }
+
+    .input-group {
+        position: relative;
+    }
+
+        .input-group i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #5d8ffc;
+            font-size: 1rem;
+            z-index: 5;
+        }
+
+        .input-group .form-control {
+            padding: 13px 18px 13px 52px;
+            border: 1.5px solid #dfe8ff;
+            border-radius: 50px;
+            background: #f8faff;
+            font-size: 0.98rem;
+        }
+
+            .input-group .form-control:focus {
+                border-color: #5d8ffc;
+                background: white;
+                box-shadow: 0 0 0 4px rgba(93,143,252,0.15);
+            }
+
+    .btn-login {
+        background: #5d8ffc;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 14px;
+        width: 100%;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-top: 6px;
+        box-shadow: 0 8px 25px rgba(93,143,252,0.4);
+        transition: all 0.3s;
+    }
+
+        .btn-login:hover {
+            background: #4b7bef;
+            transform: translateY(-3px);
+        }
+
+    /* Espaces verticaux ultra-réduits */
+    .mt-2 {
+        margin-top: 0.5rem !important;
+    }
+
+    .mb-2 {
+        margin-bottom: 0.5rem !important;
+    }
+
+    .login-form > div:last-child {
+        margin-bottom: 0 !important;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

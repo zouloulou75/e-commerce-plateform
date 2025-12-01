@@ -1,0 +1,211 @@
+﻿@model List<GadgetStore.Models.CartItem>
+
+    <div class="min-vh-100" style="background: linear-gradient(135deg, #f0f8ff 0%, #dbeafe 100%);">
+        <div class="container py-5 py-lg-7">
+            <!-- Header -->
+            <div class="text-center mb-6">
+                <h1 class="display-5 fw-bold text-indigo-900 mb-2">Complete Your Order</h1>
+                <p class="text-muted fs-lg">Secure payment • Fast delivery • Money-back guarantee</p>
+            </div>
+
+            <div class="row g-5 justify-content-center">
+                <!-- ==================== FORMULAIRE ==================== -->
+                <div class="col-lg-7 col-xxl-6">
+                    <div class="bg-white rounded-4 shadow-xl overflow-hidden">
+                        <div class="bg-primary text-white p-5 text-center">
+                            <h4 class="mb-0 fw-bold fs-3">
+                                <i class="bi bi-person-circle me-3"></i>Your Information
+                            </h4>
+                        </div>
+
+                        <div class="p-5 p-xl-7">
+                            <form asp-controller="Checkout" asp-action="ProcessOrder" method="post" id="checkoutForm">
+
+                                <!-- Nom -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">Full Name</label>
+                                    <input type="text" name="CustomerName" class="form-control form-control-lg rounded-pill"
+                                           placeholder="" required />
+                                </div>
+
+                                <!-- Email -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">Email</label>
+                                    <input type="email" class="form-control form-control-lg rounded-pill bg-light"
+                                           value="@User.Identity.Name" disabled />
+                                    <input type="hidden" name="Email" value="@User.Identity.Name" />
+                                </div>
+
+                                <!-- Adresse -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">Shipping Address</label>
+                                    <textarea name="Address" rows="3" class="form-control rounded-3"
+                                              placeholder="" required></textarea>
+                                </div>
+
+                                <!-- Téléphone -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">Phone Number</label>
+                                    <input type="tel" name="Phone" class="form-control form-control-lg rounded-pill"
+                                           placeholder="" required />
+                                </div>
+
+                                <!-- Moyen de paiement -->
+                                <div class="mb-5">
+                                    <label class="form-label fw-bold">Payment Method</label>
+                                    <select name="PaymentMethod" id="paymentMethod" class="form-select form-select-lg rounded-pill" required>
+                                        <option value="">Choose a payment method</option>
+                                        <option value="Credit Card">Credit / Debit Card</option>
+                                        <option value="PayPal">PayPal</option>
+                                        <option value="Bank Transfer">Bank Transfer</option>
+                                    </select>
+                                </div>
+
+                                <div id="additionalFields" class="mb-5"></div>
+
+                                <!-- BOUTON ULTRA VISIBLE -->
+                                <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill py-4 fw-bold fs-4 shadow-lg"
+                                        style="background: linear-gradient(135deg, #2563eb, #1d4ed8); height: 68px;">
+                                    Pay $@ViewBag.Total securely
+                                </button>
+
+                                <div class="text-center mt-4">
+                                    <small class="text-muted">
+                                        <i class="bi bi-lock-fill text-success me-1"></i>
+                                        100 % secure payment • SSL 256-bit • 3D Secure
+                                    </small>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== RÉCAPITULATIF ==================== -->
+                <div class="col-lg-5 col-xxl-4">
+                    <div class="bg-white rounded-4 shadow-xl sticky-top" style="top: 2rem;">
+                        <div class="p-5">
+                            <h4 class="fw-bold mb-5">
+                                <i class="bi bi-bag-check-fill text-primary me-2"></i>Order Summary
+                            </h4>
+
+                            <div class="vstack gap-4 mb-5">
+                                @foreach (var item in Model)
+                            {
+                                <div class="d-flex align-items-center gap-4">
+                                    <div class="position-relative">
+                                        <img src="@(item.Product.ImageUrl ?? "https://via.placeholder.com/80")"
+                                             class="rounded-3 shadow" width="80" height="80" style="object-fit: cover;" />
+                                        <span class="position-absolute top-0 start-0 bg-primary text-white rounded-pill px-2 py-1 fw-bold" style="font-size: 0.75rem;">
+                                            @item.Quantity
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="fw-semibold mb-1">@item.Product.Name</h6>
+                                        <small class="text-muted">$@item.Product.Price / unit</small>
+                                    </div>
+                                    <div class="fw-bold">$@(item.Product.Price * item.Quantity)</div>
+                                </div>
+                            }
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="fw-semibold">Subtotal</span>
+                                <span class="fs-5">$@ViewBag.Total</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-5">
+                                <span class="fw-semibold">Shipping</span>
+                                <span class="text-success fw-bold">Free</span>
+                            </div>
+
+                            <!-- TOTAL FINAL EN BLEU IMPACTANT -->
+                            <div class="text-center p-4 rounded-4 text-white fw-bold"
+                                 style="background: linear-gradient(135deg, #2563eb, #1d4ed8); font-size: 2rem; box-shadow: 0 10px 30px rgba(37,99,235,0.4);">
+                                $@ViewBag.Total
+                                <div class="fs-6 mt-1 opacity-90">Taxes included • All inclusive</div>
+                            </div>
+
+                            <div class="text-center mt-4 p-3 bg-light rounded-3">
+                                <i class="bi bi-shield-check text-success fs-3"></i>
+                                <div class="text-success fw-semibold mt-2">100 % Secure Purchase</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .bg-primary {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(37,99,235,0.5) !important;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 0.35rem rgba(37,99,235,0.25) !important;
+        }
+    </style>
+
+    @section Scripts {
+        <script>
+            $(document).ready(function () {
+                const $fields = $('#additionalFields');
+
+                $('#paymentMethod').on('change', function () {
+                    const method = this.value;
+                    $fields.empty();
+
+                    if (method === "Credit Card") {
+                        $fields.html(`
+                            <div class="p-4 bg-light rounded-4 border border-primary">
+                                <h6 class="fw-bold text-primary mb-3">Credit Card Payment</h6>
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <input type="text" name="CardNumber" class="form-control form-control-lg rounded-pill"
+                                               placeholder="1234 5678 9012 3456" maxlength="19" required />
+                                    </div>
+                                    <div class="col-7">
+                                        <input type="text" name="ExpiryDate" class="form-control form-control-lg rounded-pill"
+                                               placeholder="MM/YY" required />
+                                    </div>
+                                    <div class="col-5">
+                                        <input type="text" name="CVV" class="form-control form-control-lg rounded-pill"
+                                               placeholder="CVV" maxlength="4" required />
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    }
+                    else if (method === "PayPal") {
+                        $fields.html(`
+                            <div class="p-4 bg-light rounded-4 text-center border">
+                                <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_111x69.jpg" class="mb-3">
+                                <input type="email" name="PayPalEmail" class="form-control form-control-lg rounded-pill"
+                                       placeholder="your@email.com" required />
+                            </div>
+                        `);
+                    }
+                    else if (method === "Bank Transfer") {
+                        $fields.html(`
+                            <div class="p-4 bg-light rounded-4 border">
+                                <div class="alert alert-info small">You will receive our bank details after confirmation.</div>
+                                <input type="text" name="BankAccount" class="form-control form-control-lg rounded-pill mb-3"
+                                       placeholder="IBAN" required />
+                                <input type="text" name="RoutingNumber" class="form-control form-control-lg rounded-pill"
+                                       placeholder="BIC / SWIFT" required />
+                            </div>
+                        `);
+                    }
+                });
+            });
+        </script>
+    }

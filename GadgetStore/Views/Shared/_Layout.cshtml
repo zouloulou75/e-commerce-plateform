@@ -1,0 +1,256 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TekUp Store</title>
+
+    <!-- Bootstrap + FontAwesome + Poppins -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    @RenderSection("Styles", required: false)
+    <style>
+        :root {
+            --blue: #007bff;
+            --blue-dark: #0040c9;
+            --grad: linear-gradient(135deg, #007bff, #6610f2);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f6f8ff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: var(--grad);
+            padding: 0.6rem 0;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .navbar-brand img {
+            height: 45px;
+            transition: .3s;
+            filter: drop-shadow(0px 2px 6px rgba(0,0,0,.3));
+        }
+
+        .navbar-brand:hover img {
+            transform: scale(1.06);
+        }
+
+        .nav-link {
+            color: white !important;
+            font-weight: 600;
+            padding: .5rem 1.1rem !important;
+            border-radius: 30px;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .nav-link:hover {
+                background: rgba(255,255,255,.25);
+                backdrop-filter: blur(5px);
+                transform: translateY(-3px);
+            }
+
+        .nav-icon {
+            font-size: 1.25rem;
+        }
+
+        /* AUTH BUTTONS */
+        .btn-auth {
+            border-radius: 30px;
+            padding: 0.55rem 1.9rem !important;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: .35s ease-in-out;
+        }
+
+        .btn-login {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.5);
+            color: white !important;
+            backdrop-filter: blur(10px);
+        }
+
+            .btn-login:hover {
+                background: #fff;
+                color: var(--blue) !important;
+                box-shadow: 0 6px 14px rgba(255,255,255,0.5);
+                transform: translateY(-3px);
+            }
+
+        .btn-signup {
+            background: var(--grad);
+            color: white !important;
+            font-weight: 700;
+            box-shadow: 0px 4px 14px rgba(0,0,0,0.25);
+            border: none;
+        }
+
+            .btn-signup:hover {
+                transform: translateY(-4px) scale(1.05);
+                box-shadow: 0px 10px 25px rgba(0,0,0,0.35);
+            }
+
+        /* FOOTER (tu peux le garder ou le remplacer par celui du 2ème si tu préfères) */
+        footer {
+            margin-top: auto;
+            background: var(--grad);
+            padding: 2.5rem 0;
+            color: white;
+        }
+
+            footer a {
+                color: #e4e4e4;
+                text-decoration: none;
+                transition: 0.3s;
+            }
+
+                footer a:hover {
+                    color: white;
+                    text-decoration: underline;
+                }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="/images/logo1.png" alt="TekUp Store" />
+            </a>
+
+            <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- LEFT: Menu principal -->
+                <ul class="navbar-nav me-auto">
+                    @if (User.IsInRole("Admin"))
+                    {
+                    <li class="nav-item"><a class="nav-link" href="/Admin/Dashboard">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Admin/Categories">Categories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Admin/Products">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Admin/Orders">Orders</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Admin/Users">Customers</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Admin/ContactSubmissions">Inquiries</a></li>
+                    }
+                    else
+                    {
+                    <li class="nav-item"><a class="nav-link" href="/Products">Shop All</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Products?categoryId=1">Smartphones</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Products?categoryId=2">Laptops</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Products?categoryId=4">Audio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Products?categoryId=3">Accessories</a></li>
+                    }
+                </ul>
+
+                <!-- RIGHT: Icônes utilisateur + auth -->
+                <ul class="navbar-nav gap-3 align-items-center">
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                    @if (!User.IsInRole("Admin"))
+                        {
+                            <!-- Account -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Identity/Account/Manage" title="My Account">
+                            <i class="fas fa-user-circle nav-icon"></i>
+                            <span class="d-lg-inline d-none">Account</span>
+                        </a>
+                    </li>
+ <!-- Orders -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Orders" title="My Orders">
+                            <i class="fas fa-box nav-icon"></i>
+                            <span class="d-lg-inline d-none">Orders</span>
+                        </a>
+                    </li>
+ <!-- Cart -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Cart" title="Cart">
+                            <i class="fas fa-shopping-cart nav-icon"></i>
+                            <span class="d-lg-inline d-none">Cart</span>
+                        </a>
+                    </li>
+                        }
+
+ <!-- Logout -->
+                    <li class="nav-item">
+                        <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-danger btn-auth">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+                    }
+                    else
+                    {
+                    <li class="nav-item">
+                        <a class="btn btn-login btn-auth" asp-area="Identity" asp-page="/Account/Login">
+                            <i class="fa-solid fa-right-to-bracket"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-signup btn-auth" asp-area="Identity" asp-page="/Account/Register">
+                            <i class="fa-solid fa-user-plus"></i> Sign Up
+                        </a>
+                    </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="content container" style="padding-top:90px;">
+        @RenderBody()
+    </div>
+
+    <!-- FOOTER (tu peux remplacer par celui du 2ème script si tu veux) -->
+    <footer>
+        <div class="container">
+            <div class="row text-center text-md-start gy-4">
+                <div class="col-md-3 col-6">
+                    <h6>TekUp Store</h6><hr><small>Best gadgets, best prices.</small>
+                </div>
+                <div class="col-md-3 col-6">
+                    <h6>Shop</h6><hr>
+                    <div><a href="/Products">All Products</a></div>
+                    <div><a href="/Cart">Your Cart</a></div>
+                    <div><a href="/Orders">Your Orders</a></div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <h6>Useful links</h6><hr>
+                    <div><a href="/Contact">Contact</a></div>
+                    <div><a href="/Identity/Account/Login">Login</a></div>
+                    <div><a href="/Identity/Account/Register">Register</a></div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <h6>Contact</h6><hr>
+                    <small>Ariana, Tunisie<br>support@tekupstore.com</small>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <small>© @DateTime.Now.Year TekUp Store. All Rights Reserved.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

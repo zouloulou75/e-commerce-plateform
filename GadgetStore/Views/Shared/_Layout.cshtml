@@ -1,126 +1,212 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gadget Store</title>
-     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
-    <link href="~/lib/bootstrap/dist/css/bootstrap.rtl.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>TekUp Store</title>
+
+    <!-- Bootstrap + FontAwesome + Poppins -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    @RenderSection("Styles", required: false)
     <style>
-        .navbar-color {
-            background: linear-gradient(90deg, #007bff 0%, #6610f2 100%);
+        :root {
+            --blue: #007bff;
+            --blue-dark: #0040c9;
+            --grad: linear-gradient(135deg, #007bff, #6610f2);
         }
-        nav-item>a:hover {
-            color:lightgray;
-        }
+
         body {
+            font-family: 'Poppins', sans-serif;
+            background: #f6f8ff;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
         }
 
-        .content {
-            flex: 1;
+        /* NAVBAR */
+        .navbar {
+            background: var(--grad);
+            padding: 0.6rem 0;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
 
-        .footer {
+        .navbar-brand img {
+            height: 45px;
+            transition: .3s;
+            filter: drop-shadow(0px 2px 6px rgba(0,0,0,.3));
+        }
+
+        .navbar-brand:hover img {
+            transform: scale(1.06);
+        }
+
+        .nav-link {
+            color: white !important;
+            font-weight: 600;
+            padding: .5rem 1.1rem !important;
+            border-radius: 30px;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .nav-link:hover {
+                background: rgba(255,255,255,.25);
+                backdrop-filter: blur(5px);
+                transform: translateY(-3px);
+            }
+
+        .nav-icon {
+            font-size: 1.25rem;
+        }
+
+        /* AUTH BUTTONS */
+        .btn-auth {
+            border-radius: 30px;
+            padding: 0.55rem 1.9rem !important;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: .35s ease-in-out;
+        }
+
+        .btn-login {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.5);
+            color: white !important;
+            backdrop-filter: blur(10px);
+        }
+
+            .btn-login:hover {
+                background: #fff;
+                color: var(--blue) !important;
+                box-shadow: 0 6px 14px rgba(255,255,255,0.5);
+                transform: translateY(-3px);
+            }
+
+        .btn-signup {
+            background: var(--grad);
+            color: white !important;
+            font-weight: 700;
+            box-shadow: 0px 4px 14px rgba(0,0,0,0.25);
+            border: none;
+        }
+
+            .btn-signup:hover {
+                transform: translateY(-4px) scale(1.05);
+                box-shadow: 0px 10px 25px rgba(0,0,0,0.35);
+            }
+
+        /* FOOTER (tu peux le garder ou le remplacer par celui du 2ème si tu préfères) */
+        footer {
             margin-top: auto;
+            background: var(--grad);
+            padding: 2.5rem 0;
+            color: white;
         }
+
+            footer a {
+                color: #e4e4e4;
+                text-decoration: none;
+                transition: 0.3s;
+            }
+
+                footer a:hover {
+                    color: white;
+                    text-decoration: underline;
+                }
     </style>
 </head>
-
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-color ">
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
             <a class="navbar-brand" href="/">
-            <img width="150px" src="/images/logo1.png" />    
+                <img src="/images/logo1.png" alt="TekUp Store" />
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+
+            <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars"></i>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+                <!-- LEFT: Menu principal -->
+                <ul class="navbar-nav me-auto">
                     @if (User.IsInRole("Admin"))
                     {
-                        <!-- Admin-specific routes -->
-                        <li class="nav-item"><a class="nav-link text-white" href="/Admin/Dashboard">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Admin/Categories">Categories</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Admin/Products">Products</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Admin/Orders">Orders</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Admin/Users">Customers</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Admin/ContactSubmissions">Inquires</a></li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Admin" asp-action="Statistics">
-                                <i class="fas fa-chart-line"></i> Sales Statistics
-                            </a>
-                        </li>
-                  
+                        <li class="nav-item"><a class="nav-link" href="/Admin/Dashboard">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Admin/Categories">Categories</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Admin/Products">Products</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Admin/Orders">Orders</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Admin/Users">Customers</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Admin/ContactSubmissions">Inquiries</a></li>
                     }
                     else
                     {
-                        <!-- Non-admin routes -->
-                        <li class="nav-item"><a class="nav-link text-white" href="/Products">Shop All</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Products?categoryId=1">Smartphones</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Products?categoryId=2">Laptops</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Products?categoryId=4">Audio</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Products?categoryId=3">Accessories</a></li>
-                  
+                        <li class="nav-item"><a class="nav-link" href="/Products">Shop All</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Products?categoryId=1">Smartphones</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Products?categoryId=2">Laptops</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Products?categoryId=4">Audio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Products?categoryId=3">Accessories</a></li>
                     }
                 </ul>
 
-                <ul class="navbar-nav ms-auto">
+                <!-- RIGHT: Icônes utilisateur + auth -->
+                <ul class="navbar-nav gap-3 align-items-center">
+
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <!-- Show only for non-admin users -->
                         @if (!User.IsInRole("Admin"))
                         {
-                            <!-- Logged-in user options -->
+                            <!-- Account -->
                             <li class="nav-item">
-                                <a class="nav-link" href="/Identity/Account/Manage">
-                                    <i class="fas fa-user-circle me-2"></i>Account
+                                <a class="nav-link" href="/Identity/Account/Manage" title="My Account">
+                                    <i class="fas fa-user-circle nav-icon"></i>
+                                    <span class="d-lg-inline d-none">Account</span>
                                 </a>
                             </li>
-
                             <!-- Orders -->
                             <li class="nav-item">
-                                <a class="nav-link" href="/Orders">
-                                    <i class="fas fa-box me-2"></i>Orders
+                                <a class="nav-link" href="/Orders" title="My Orders">
+                                    <i class="fas fa-box nav-icon"></i>
+                                    <span class="d-lg-inline d-none">Orders</span>
                                 </a>
                             </li>
-
                             <!-- Cart -->
                             <li class="nav-item">
-                                <a class="nav-link" href="/Cart">
-                                    <i class="fas fa-shopping-cart me-2"></i>Cart
+                                <a class="nav-link" href="/Cart" title="Cart">
+                                    <i class="fas fa-shopping-cart nav-icon"></i>
+                                    <span class="d-lg-inline d-none">Cart</span>
                                 </a>
                             </li>
                         }
 
+                        <!-- Logout -->
                         <li class="nav-item">
                             <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-danger rounded-pill">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                <button type="submit" class="btn btn-danger btn-auth">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
                                 </button>
                             </form>
                         </li>
                     }
-
                     else
                     {
-                        <!-- Guest user options -->
                         <li class="nav-item">
-                            <a class="btn btn-primary rounded-pill px-3 mx-1" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                            <a class="btn btn-login btn-auth" asp-area="Identity" asp-page="/Account/Login">
+                                <i class="fa-solid fa-right-to-bracket"></i> Login
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-primary rounded-pill px-3 " asp-area="Identity" asp-page="/Account/Register">Sign Up</a>
+                            <a class="btn btn-signup btn-auth" asp-area="Identity" asp-page="/Account/Register">
+                                <i class="fa-solid fa-user-plus"></i> Sign Up
+                            </a>
                         </li>
                     }
                 </ul>
@@ -128,59 +214,43 @@
         </div>
     </nav>
 
-    <div class="content container mt-4">
+    <!-- MAIN CONTENT -->
+    <div class="content container" style="padding-top:90px;">
         @RenderBody()
     </div>
 
-  
-        <footer class="mt-4 text-center text-lg-start text-white" style="background-color: #1c2331">
-   
-
-            <section class="">
-                <div class="container text-center text-md-start mt-5">
-                    <div class="row mt-3">
-                        <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
-                            <h6 class="text-uppercase fw-bold">Gadget Store</h6>
-                            <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #7c4dff; height: 2px" />
-                            <p>Your one-stop shop for the latest gadgets and electronics. Explore our vast collection of products and find the perfect fit for your needs.</p>
-                        </div>
-
-                        <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
-                            <h6 class="text-uppercase fw-bold">Products</h6>
-                            <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #7c4dff; height: 2px" />
-                        <p><a href="/Products" class="text-white" style="text-decoration:none">All Products</a></p>
-                        <p><a href="/Cart" class="text-white" style="text-decoration:none">Your Cart</a></p>
-                        <p><a href="/Orders" class="text-white" style="text-decoration:none">Your Orders</a></p>
-                        </div>
-
-                        <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
-                            <h6 class="text-uppercase fw-bold">Useful links</h6>
-                            <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #7c4dff; height: 2px" />
-                            <p><a href="/Contact" class="text-white" style="text-decoration:none">Contact</a></p>
-                        <p><a href="/Identity/Account/Login" class="text-white" style="text-decoration:none">Login</a></p>
-                        <p><a href="/Identity/Account/Register" class="text-white" style="text-decoration:none">Sign Up</a></p>
-                        </div>
-
-                        <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-                            <h6 class="text-uppercase fw-bold">Contact</h6>
-                            <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #7c4dff; height: 2px" />
-                            <p><i class="fas fa-home mr-3"></i>Kitchener, ON, N2E3C9</p>
-                            <p><i class="fas fa-envelope mr-3"></i> support@gadgetstore.com</p>
-                            <p><i class="fas fa-phone mr-3"></i> +1 123 567 890</p>
-                        </div>
-                    </div>
+    <!-- FOOTER (tu peux remplacer par celui du 2ème script si tu veux) -->
+    <footer>
+        <div class="container">
+            <div class="row text-center text-md-start gy-4">
+                <div class="col-md-3 col-6">
+                    <h6>TekUp Store</h6><hr><small>Best gadgets, best prices.</small>
                 </div>
-            </section>
-
-            <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
-                © 2024 Gadget Store. All Rights Reserved.
+                <div class="col-md-3 col-6">
+                    <h6>Shop</h6><hr>
+                    <div><a href="/Products">All Products</a></div>
+                    <div><a href="/Cart">Your Cart</a></div>
+                    <div><a href="/Orders">Your Orders</a></div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <h6>Useful links</h6><hr>
+                    <div><a href="/Contact">Contact</a></div>
+                    <div><a href="/Identity/Account/Login">Login</a></div>
+                    <div><a href="/Identity/Account/Register">Register</a></div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <h6>Contact</h6><hr>
+                    <small>Ariana, Tunisie<br>support@tekupstore.com</small>
+                </div>
             </div>
-        </footer>
- 
+            <div class="text-center mt-4">
+                <small>© @DateTime.Now.Year TekUp Store. All Rights Reserved.</small>
+            </div>
+        </div>
+    </footer>
 
-    @RenderSection("Scripts", required: false)
+    <!-- SCRIPTS -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
-
-
-
 </html>

@@ -1,74 +1,246 @@
 @model GadgetStore.Models.Product
-
 @{
-    ViewData["Title"] = "Product Details";
+    ViewData["Title"] = Model.Name + " - TekUp Store";
 }
 
-<div class="container my-5">
-    <!-- Feedback Messages at the Top -->
+<div class="container py-4 py-md-5">
+
+    <!-- NOTIFICATION ULTRA COMPACTE & CUTE -->
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle me-2"></i>
-            @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="notification-mini mb-4 mx-auto">
+            <i class="fas fa-check"></i>
+            <span>@TempData["SuccessMessage"]</span>
+            <button type="button" class="btn-close btn-close-white ms-3" data-bs-dismiss="alert"></button>
         </div>
     }
 
-    @* @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            @TempData["ErrorMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    } *@
+    <div class="row g-4 g-xl-5">
 
-    <!-- Product Details Section -->
-    <div class="row gx-5">
-        <!-- Product Image -->
-        <div class="col-md-5">
-            <div class="card shadow-sm border-0">
-                <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded"
-                    style="object-fit: contain; max-height: 500px;" />
+        <!-- IMAGE COMPACTE & ÉLÉGANTE -->
+        <div class="col-lg-5">
+            <div class="img-box">
+                <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded-3" />
             </div>
         </div>
 
-        <!-- Product Information -->
-        <div class="col-md-7">
-            <h1 class="display-5 fw-bold text-dark">@Model.Name</h1>
+        <!-- INFOS COMPACTES & RAFFINÉES -->
+        <div class="col-lg-7">
+            <div class="info-card">
 
-            @if (Model.Category != null)
-            {
-                <p class="text-muted"><strong>Category:</strong> @Model.Category.Name</p>
-            }
+                <!-- Catégorie -->
+                @if (Model.Category != null)
+                {
+                    <span class="cat-badge">@Model.Category.Name</span>
+                }
 
-            <h3 class="text-success fw-bold mb-4">$@Model.Price.ToString("F2")</h3>
-            <hr/>
-            <p class="text-muted mb-4">@Model.Description</p>
-            <!-- Add to Cart Form -->
-            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="mb-4">
-                @* Anti-Forgery Token *@
-                @Html.AntiForgeryToken()
+                <!-- Titre -->
+                <h1 class="title">@Model.Name</h1>
 
-                <input type="hidden" name="ProductId" value="@Model.Id" />
-
-                <div class="mb-3">
-                    <label for="quantity" class="form-label fw-bold">Quantity:</label>
-                    <input id="quantity" name="Quantity" type="number" class="form-control w-25" value="1" min="1"
-                        max="10" required aria-label="Quantity" />
-                    <small class="form-text text-muted">Select a quantity between 1 and 10.</small>
+                <!-- Prix -->
+                <div class="price-line">
+                    <span class="price">$@Model.Price.ToString("F2")</span>
+                    <del class="old">$@((Model.Price + 69.90m).ToString("F2"))</del>
+                    <span class="save">Save @(((69.90m / (Model.Price + 69.90m)) * 100).ToString("F0"))%</span>
                 </div>
 
-                <div class="d-grid gap-2 d-md-flex">
-                    <button type="submit" class="btn btn-primary btn-lg me-md-2">
-                        <i class="bi bi-cart-plus"></i> Add to Cart
-                    </button>
-                    <a asp-controller="Products" asp-action="Index" class="btn btn-outline-secondary btn-lg">
-                        <i class="bi bi-arrow-left"></i> Back to Products
-                    </a>
+                <hr class="my-4">
+
+                <!-- Description courte -->
+                <p class="desc">@Model.Description</p>
+
+                <!-- Quantité + Boutons -->
+                <form asp-controller="Cart" asp-action="AddToCart" method="post" class="mt-4">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="ProductId" value="@Model.Id" />
+
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <label class="fw-600">Qty:</label>
+                        <input name="Quantity" type="number" value="1" min="1" max="10"
+                               class="qty-input" />
+                    </div>
+
+                    <div class="d-flex flex-column flex-sm-row gap-3">
+                        <button type="submit" class="btn-add">
+                            <i class="fas fa-shopping-bag me-2"></i>Add to Cart
+                        </button>
+                        <a asp-controller="Products" asp-action="Index" class="btn-back">
+                            Back to Shop
+                        </a>
+                    </div>
+                </form>
+
+                <!-- Mini infos livraison -->
+                <div class="mt-4 text-center text-muted small opacity-75">
+                    <i class="fas fa-truck text-primary me-1"></i>
+                    Free shipping • 30-day returns
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    :root {
+        --grad: linear-gradient(135deg,#007bff,#6610f2);
+        --blue: #007bff;
+        --purple: #6610f2;
+    }
+
+    body {
+        background: #f8f9ff;
+        font-family: 'Poppins',sans-serif;
+    }
+
+    /* Notification mini & cute */
+    .notification-mini {
+        max-width: 420px;
+        background: linear-gradient(135deg,#d1fae5,#a7f Btn3d0);
+        color: #065f46;
+        padding: 10px 16px;
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+        font-weight: 600;
+        box-shadow: 0 8px 25px rgba(16,185,129,0.2);
+    }
+
+    /* Image compacte */
+    .img-box {
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(12px);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 12px 40px rgba(0,123,255,0.15);
+        height: 420px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: .4s;
+    }
+
+        .img-box:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0,123,255,0.22);
+        }
+
+        .img-box img {
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+    /* Carte infos ultra compacte */
+    .info-card {
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(12px);
+        border-radius: 16px;
+        padding: 28px 32px;
+        box-shadow: 0 12px 40px rgba(0,123,255,0.12);
+        border: 1px solid rgba(0,123,255,0.15);
+        min-height: 420px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .cat-badge {
+        background: var(--grad);
+        color: white;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 6px 16px;
+        border-radius: 50px;
+        display: inline-block;
+    }
+
+    .title {
+        font-size: 2rem;
+        font-weight: 800;
+        background: var(--grad);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 12px 0 8px;
+        line-height: 1.2;
+    }
+
+    .price-line {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 8px 0;
+    }
+
+    .price {
+        font-size: 2.4rem;
+        font-weight: 900;
+        color: var(--blue);
+    }
+
+    .old {
+        font-size: 1.1rem;
+        color: #94a3b8;
+    }
+
+    .save {
+        background: #ef4444;
+        color: white;
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 50px;
+    }
+
+    .desc {
+        font-size: 0.98rem;
+        line-height: 1.7;
+        color: #64748b;
+        flex-grow: 1;
+    }
+
+    .qty-input {
+        width: 90px;
+        height: 48px;
+        text-align: center;
+        border: 2px solid #e0e7ff;
+        border-radius: 50px;
+        font-weight: 600;
+    }
+
+        .qty-input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 4px rgba(0,123,255,.15);
+        }
+
+    .btn-add {
+        background: var(--grad);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 14px 28px;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: .35s;
+    }
+
+        .btn-add:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(102,16,242,.4);
+        }
+
+    .btn-back {
+        background: transparent;
+        color: #64748b;
+        border: 2px solid #e0e7ff;
+        border-radius: 50px;
+        padding: 14px 28px;
+        font-weight: 600;
+        transition: .3s;
+    }
+
+        .btn-back:hover {
+            background: #e0e7ff;
+            color: #4f46e5;
+        }
+</style>

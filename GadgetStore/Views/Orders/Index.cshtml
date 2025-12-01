@@ -1,48 +1,232 @@
-@model List<OrderViewModel>
+﻿@model List<OrderViewModel>
 @{
     ViewData["Title"] = "Your Orders";
 }
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-light: #818cf8;
+        --primary-dark: #4338ca;
+        --soft-blue: #dbeafe;
+        --soft-cyan: #cffafe;
+        --soft-indigo: #e0e7ff;
+        --accent: #06b6d4;
+        --gray-100: #f8fafc;
+        --gray-200: #e2e8f0;
+        --success: #86efac;
+        --shadow: 0 10px 25px rgba(79, 70, 229, 0.15);
+        --radius: 1.5rem;
+    }
 
-<h1 class="text-primary mb-4">Your Orders</h1>
+    body {
+        background: linear-gradient(135deg, #dbeafe, #e0e7ff, #cffafe);
+        min-height: 100vh;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+    }
 
-@if (ViewBag.NoOrders)
-{
-        <div class="alert alert-info text-center">
-            <h4>No orders found.</h4>
-            <p>It seems like you haven't placed any orders yet. Start shopping now!</p>
-            <a href="/Products" class="btn btn-primary">Shop Now</a>
+    .orders-container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    h1 {
+        text-align: center;
+        font-weight: 800;
+        background: linear-gradient(to right, var(--primary), #22d3ee);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 2rem;
+        font-size: 2.8rem;
+    }
+
+    .no-orders-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: 3rem 2rem;
+        text-align: center;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.3);
+    }
+
+        .no-orders-card h4 {
+            font-size: 1.8rem;
+            color: #64748b;
+            margin-bottom: 1rem;
+        }
+
+    .order-card {
+        background: white;
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        margin-bottom: 1.8rem;
+        transition: all 0.3s ease;
+        border: 1px solid var(--gray-200);
+    }
+
+        .order-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(79, 70, 229, 0.25);
+        }
+
+    .order-header {
+        background: linear-gradient(to right, var(--primary), var(--accent));
+        color: white;
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .order-header::before {
+            content: "🌊";
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 6rem;
+            opacity: 0.15;
+        }
+
+        .order-header h5 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+    .order-body {
+        padding: 1.8rem;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        font-size: 1.05rem;
+    }
+
+    .info-item {
+        background: var(--soft-blue);
+        padding: 0.8rem 1.2rem;
+        border-radius: 1rem;
+        border-left: 4px solid var(--primary-light);
+    }
+
+        .info-item strong {
+            color: var(--primary-dark);
+        }
+
+    .items-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 0.5rem;
+    }
+
+        .items-table th {
+            background: var(--soft-indigo);
+            color: var(--primary-dark);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .items-table td {
+            background: var(--soft-cyan);
+            padding: 1rem;
+            border-radius: 1rem;
+        }
+
+        .items-table tr:hover td {
+            background: #99f6e4;
+            transform: scale(1.02);
+            transition: all 0.2s;
+        }
+
+    .btn-cute {
+        background: linear-gradient(to right, #0ea5e9, #06b6d4);
+        color: white;
+        border: none;
+        padding: 0.9rem 2rem;
+        border-radius: 999px;
+        font-weight: 600;
+        box-shadow: 0 8px 20px rgba(14, 165, 233, 0.4);
+        transition: all 0.3s;
+    }
+
+        .btn-cute:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(6, 182, 212, 0.5);
+        }
+
+    .sparkle {
+        animation: sparkle 2s infinite alternate;
+    }
+
+    @@keyframes sparkle {
+        0% {
+            opacity: 0.8;
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+    }
+</style>
+
+<div class="orders-container">
+    <h1 class="sparkle">Your Orders</h1>
+
+    @if (ViewBag.NoOrders == true)
+    {
+        <div class="no-orders-card">
+            <h4>No orders yet…</h4>
+            <p class="text-muted">Your future treasures are waiting~</p>
+            <br />
+            <a href="/Products" class="btn btn-cute">Shop Now & Dive into the Magic!</a>
         </div>
-}
-else
-{
-        <div class="list-group">
+    }
+    else
+    {
         @foreach (var order in Model)
         {
-                    <div class="list-group-item shadow-sm mb-3">
-                        <h5 class="text-primary">Order ID: @order.OrderId</h5>
-                        <p><strong>Order Date:</strong> @order.OrderDate.ToString("dd MMM yyyy")</p>
-                        <p><strong>Total Amount:</strong> $@order.TotalAmount</p>
-
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                        @foreach (var item in order.Items)
-                        {
-                                        <tr>
-                                            <td>@item.ProductName</td>
-                                            <td>@item.Quantity</td>
-                                            <td>$@item.Price</td>
-                                        </tr>
-                        }
-                            </tbody>
-                        </table>
+            <div class="order-card">
+                <div class="order-header">
+                    <h5>Order #@order.OrderId</h5>
+                </div>
+                <div class="order-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <strong>Date</strong><br>@order.OrderDate.ToString("dd MMM yyyy")
+                        </div>
+                        <div class="info-item">
+                            <strong>Total</strong><br>
+                            <span style="font-size:1.3rem; color:#0ea5e9;">$@order.TotalAmount</span>
+                        </div>
                     </div>
+
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in order.Items)
+                            {
+                                <tr>
+                                    <td><strong>@item.ProductName</strong></td>
+                                    <td class="text-center">@item.Quantity</td>
+                                    <td>$@item.Price</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         }
-        </div>
-}
+    }
+</div>

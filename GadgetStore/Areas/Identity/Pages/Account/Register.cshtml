@@ -1,49 +1,155 @@
 ﻿@page
 @model RegisterModel
-
 @{
     ViewData["Title"] = "Register";
 }
 
-<h1 class="text-center mb-4">@ViewData["Title"]</h1>
+<div class="login-container">
+    <div class="login-box">
+        <div class="avatar">
+            <i class="fas fa-user-plus"></i>
+        </div>
 
-<div class="row justify-content-center mb-5">
-    <!-- Registration Form -->
-    <div class="col-md-6">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post"
-            class="card shadow-sm p-4 border-0 bg-light">
-            <h2 class="h5 text-center mb-3 text-primary">Create a new account</h2>
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+        <form method="post" class="login-form">
+            <div asp-validation-summary="ModelOnly" class="text-danger text-center small mb-2"></div>
 
-            <!-- Email Input -->
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true"
-                    placeholder="name@example.com" />
-                <label asp-for="Input.Email">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            <!-- Email -->
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input asp-for="Input.Email" class="form-control" placeholder="Email" autocomplete="username" />
             </div>
+            <span asp-validation-for="Input.Email" class="text-danger small"></span>
 
-            <!-- Password Input -->
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true"
-                    placeholder="Password" />
-                <label asp-for="Input.Password">Password</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            <!-- Password -->
+            <div class="input-group mt-2">
+                <i class="fas fa-lock"></i>
+                <input asp-for="Input.Password" class="form-control" placeholder="Password" autocomplete="new-password" />
             </div>
+            <span asp-validation-for="Input.Password" class="text-danger small"></span>
 
-            <!-- Confirm Password Input -->
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password"
-                    aria-required="true" placeholder="Confirm Password" />
-                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            <!-- Confirm Password -->
+            <div class="input-group mt-2">
+                <i class="fas fa-lock"></i>
+                <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="Confirm Password" autocomplete="new-password" />
             </div>
+            <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
 
-            <!-- Register Button -->
-            <button id="registerSubmit" type="submit" class="btn btn-primary w-100">Register</button>
+            <!-- Bouton Create Account -->
+            <button type="submit" class="btn-login">Create Account</button>
+
+            <!-- Lien Login (collé en bas) -->
+            <div class="text-center mt-2 mb-0">
+                <small class="text-secondary">Already have an account? </small>
+                <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl"
+                   class="text-primary fw-semibold text-decoration-none">Log in</a>
+            </div>
         </form>
     </div>
 </div>
+
+<!-- ====================== STYLE IDENTIQUE AU LOGIN ====================== -->
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        background: #fff;
+        height: 100%;
+        font-family: 'Segoe UI',sans-serif;
+    }
+
+    .login-container {
+        padding-top: 30px; /* même distance depuis la navbar */
+        display: flex;
+        justify-content: center;
+    }
+
+    .login-box {
+        background: rgba(255,255,255,0.98);
+        border-radius: 28px;
+        padding: 32px 40px;
+        width: 100%;
+        max-width: 420px; /* EXACTEMENT la même largeur que le Login */
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        border: 1px solid #e0e7ff;
+    }
+
+    .avatar {
+        width: 72px;
+        height: 72px;
+        background: #5d8ffc;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px;
+        font-size: 2.1rem;
+        box-shadow: 0 8px 25px rgba(93,143,252,0.35);
+    }
+
+    .input-group {
+        position: relative;
+    }
+
+        .input-group i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #5d8ffc;
+            font-size: 1rem;
+            z-index: 5;
+        }
+
+        .input-group .form-control {
+            padding: 13px 18px 13px 52px;
+            border: 1.5px solid #dfe8ff;
+            border-radius: 50px;
+            background: #f8faff;
+            font-size: 0.98rem;
+        }
+
+            .input-group .form-control:focus {
+                border-color: #5d8ffc;
+                background: white;
+                box-shadow: 0 0 0 4px rgba(93,143,252,0.15);
+            }
+
+    .btn-login {
+        background: #5d8ffc;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 14px;
+        width: 100%;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-top: 6px;
+        box-shadow: 0 8px 25px rgba(93,143,252,0.4);
+        transition: all 0.3s;
+    }
+
+        .btn-login:hover {
+            background: #4b7bef;
+            transform: translateY(-3px);
+        }
+
+    /* Espacement ultra-compact identique au Login */
+    .mt-2 {
+        margin-top: 0.5rem !important;
+    }
+
+    .mb-2 {
+        margin-bottom: 0.5rem !important;
+    }
+
+    .login-form > div:last-child {
+        margin-bottom: 0 !important;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
